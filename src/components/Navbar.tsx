@@ -1,4 +1,4 @@
-import { SVGProps, useState } from "react";
+import { SVGProps, useEffect, useState } from "react";
 import logo from "../assets/BUUK FULL LOGO MAIN HORIZONTAL 1.png";
 import { FaBars } from "react-icons/fa";
 import { RiArrowDownSLine } from "react-icons/ri";
@@ -24,6 +24,14 @@ const navItems: Navtype[] = [
 const Navbar = () => {
   const [path, setPath] = useState("/customers");
   const [showMobileNav, setShowMobileNav] = useState(false);
+
+  useEffect(() => {
+    if (showMobileNav) {
+      window.document.body.style.overflow = "hidden";
+    } else {
+      window.document.body.style.overflow = "auto";
+    }
+  }, [showMobileNav]);
 
   return (
     <nav className="border-b-[1px] border-b-[#E5E5E4] w-screen px-2">
@@ -76,7 +84,13 @@ const Navbar = () => {
             <ul className="flex flex-col gap-2">
               {navItems.map((item) => {
                 return (
-                  <li key={item.name} onClick={() => setPath(item.path)}>
+                  <li
+                    key={item.name}
+                    onClick={() => {
+                      setPath(item.path);
+                      setShowMobileNav(false);
+                    }}
+                  >
                     <Link
                       to={item.path}
                       className={`flex items-center gap-2 cursor-pointer rounded-full py-3 px-5 ${
