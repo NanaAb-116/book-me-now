@@ -3,19 +3,35 @@ import { CiSearch } from "react-icons/ci";
 import ReceiptIconWhite from "../assets/icons/ReceiptIconWhite";
 import CreateCampaignForm from "../components/consumer/CreateCampaignForm";
 import CampaignTable from "../components/consumer/CampaignTable";
+import { useForm } from "react-hook-form";
 
-export interface Campaign {
+export type Campaign = {
   _id: string;
   campaignTitle: string;
   description: string;
   targetGroup: string;
   campaignStatus: string;
-}
+};
+
+export type ResData = {
+  campaign: Campaign[];
+  totalCampaign: number;
+  totalPages: number;
+};
 
 const Customers = () => {
+  const { register, handleSubmit } = useForm<{ search: string }>();
+
   const [showModal, setShowModal] = useState(false);
-  const [campaign, setCampaign] = useState<Campaign[] | null>(null);
+  const [campaign, setCampaign] = useState<ResData | null>(null);
   const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const onSubmit = (data: { search: string }) => {
+    setSearch(data.search);
+    setPage(1);
+  };
 
   return (
     <>
@@ -36,14 +52,24 @@ const Customers = () => {
             </p>
           </div>
           <div className="mt-4 sm:flex gap-2 justify-between">
-            <form className="relative mt-2 flex w-full">
+            <form
+              className="relative mt-2 flex w-full"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <CiSearch className="absolute top-4 left-3 text-2xl text-[#808785]" />
               <input
                 type="text"
                 placeholder="Search customer log by customer name, email address & phone number"
                 className="border-[1px] border-[#E5E5E4] rounded-md pl-11 py-4 flex lg:w-[37rem] w-full outline-none"
+                {...register("search")}
+                onChange={(e) => {
+                  if (e.target.value.trim() === "") {
+                    setSearch("");
+                    setPage(1);
+                  }
+                }}
               />
-              <button className="ml-2 bg-white p-4 rounded-md border-[1px] border-[#004741] text-[#004741] hidden lg:inline-block">
+              <button className="ml-2 bg-white p-4 rounded-md border-[1px] border-[#004741] text-[#004741] lg:inline-block">
                 Search
               </button>
             </form>
@@ -56,11 +82,14 @@ const Customers = () => {
             </button>
           </div>
           <CampaignTable
+            totalPages={totalPages}
             campaign={campaign}
             setCampaign={setCampaign}
-            setTotalPages={setTotalPages}
-            totalPages={totalPages}
+            search={search}
+            setPage={setPage}
+            page={page}
           />
+
           {showModal && (
             <CreateCampaignForm
               setShowModal={setShowModal}
@@ -68,7 +97,6 @@ const Customers = () => {
               campaign={campaign}
               setCampaign={setCampaign}
               setTotalPages={setTotalPages}
-              totalPages={totalPages}
             />
           )}
         </div>

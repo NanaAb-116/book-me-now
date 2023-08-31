@@ -4,7 +4,7 @@ import ReceiptIconBlack from "../../assets/icons/ReceiptIconBlack";
 import { useForm } from "react-hook-form";
 import customAxios from "../../utils/customAxios";
 import { toast } from "react-toastify";
-import { Campaign } from "../../pages/Customers";
+import { Campaign, ResData } from "../../pages/Customers";
 
 type FormInput = {
   title: string;
@@ -15,10 +15,9 @@ type FormInput = {
 type Props = {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   showModal: boolean;
-  campaign: Campaign[] | null;
-  setCampaign: React.Dispatch<React.SetStateAction<Campaign[] | null>>;
+  campaign: ResData | null;
+  setCampaign: React.Dispatch<React.SetStateAction<ResData | null>>;
   setTotalPages: React.Dispatch<React.SetStateAction<number>>;
-  totalPages: number;
 };
 
 const CreateCampaignForm = ({
@@ -27,7 +26,6 @@ const CreateCampaignForm = ({
   setCampaign,
   campaign,
   setTotalPages,
-  totalPages,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,17 +43,21 @@ const CreateCampaignForm = ({
         description: data.description,
         targetGroup: data.target,
       });
-      setCampaign((prevState) => [
-        {
-          _id: Date.now().toLocaleString(),
-          campaignTitle: data.title,
-          description: data.description,
-          targetGroup: data.target,
-          campaignStatus: "active",
-        },
-        ...(prevState as Campaign[]),
-      ]);
-      setTotalPages(campaign ? Math.ceil(totalPages / 10) : 1);
+      setCampaign((prevState) => ({
+        ...(prevState as ResData),
+        campaign: [
+          {
+            _id: Date.now().toLocaleString(),
+            campaignTitle: data.title,
+            description: data.description,
+            targetGroup: data.target,
+            campaignStatus: "active",
+          },
+          ...(prevState?.campaign as Campaign[]),
+        ],
+      }));
+
+      setTotalPages(Math.ceil((campaign?.totalCampaign as number) / 10));
       setShowModal(false);
     } catch (error: any) {
       if (error.response.status === 400) {

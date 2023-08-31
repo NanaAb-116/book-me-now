@@ -2,25 +2,26 @@ import { useEffect, useState } from "react";
 import customAxios from "../../utils/customAxios";
 import { HiMiniArrowLeft, HiMiniArrowRight } from "react-icons/hi2";
 import { RiMoreLine } from "react-icons/ri";
-import { Campaign } from "../../pages/Customers";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
-import { Backdrop } from "@mui/material";
+import { ResData } from "../../pages/Customers";
+import Loader from "../Loader";
 
 type Props = {
-  campaign: Campaign[] | null;
-  setCampaign: React.Dispatch<React.SetStateAction<Campaign[] | null>>;
+  campaign: ResData | null;
+  setCampaign: React.Dispatch<React.SetStateAction<ResData | null>>;
   totalPages: number;
-  setTotalPages: React.Dispatch<React.SetStateAction<number>>;
+  search: string;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  page: number;
 };
 
 const CampaignTable = ({
   setCampaign,
   campaign,
-  setTotalPages,
   totalPages,
+  search,
+  setPage,
+  page,
 }: Props) => {
-  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -28,29 +29,25 @@ const CampaignTable = ({
       setIsLoading(true);
       try {
         const { data } = await customAxios.get(
-          `/campaign/?page=${page}&limit=10`
+          `/campaign/?search=${search}&page=${page}&limit=2`
         );
-        setCampaign(data.campaign);
-        setTotalPages(data.totalPages);
+        setCampaign(data);
       } catch (error) {}
 
       setIsLoading(false);
     };
     fetchCampaign();
-  }, [page, setCampaign, setTotalPages]);
+  }, [page, setCampaign, search]);
 
   const handlePage = (value: number) => {
-    if (value <= totalPages) {
+    if (value <= (campaign?.totalPages || totalPages)) {
       setPage(value);
     }
   };
+
   return (
     <>
-      <Backdrop open={isLoading}>
-        <Box sx={{ display: "flex" }}>
-          <CircularProgress />
-        </Box>
-      </Backdrop>
+      {isLoading && <Loader />}
       <div className="bg-white mt-8 min-h-[710px] overflow-y-scroll">
         <table className="w-full rounded-t-lg overflow-hidden">
           <thead className="">
@@ -62,7 +59,7 @@ const CampaignTable = ({
             </tr>
           </thead>
           <tbody className="">
-            {campaign?.slice(0, 10).map((item) => {
+            {campaign?.campaign?.slice(0, 10).map((item) => {
               return (
                 <tr
                   key={item._id}
@@ -101,7 +98,7 @@ const CampaignTable = ({
         >
           1
         </span>
-        {totalPages > 1 && (
+        {(campaign?.totalPages || totalPages) > 1 && (
           <span
             className={`cursor-pointer rounded-full h-8 w-8 flex items-center justify-center text-[12px] ${
               page === 2 ? "bg-[#004741] text-white" : "bg-white text-[#004741]"
@@ -111,19 +108,21 @@ const CampaignTable = ({
             2
           </span>
         )}
-        {totalPages > 3 && page > 2 && page !== totalPages && (
-          <span
-            className={`cursor-pointer rounded-full h-8 w-8 flex items-center justify-center text-[12px] ${
-              totalPages > 3
-                ? "bg-[#004741] text-white"
-                : "bg-white text-[#004741]"
-            }`}
-            onClick={() => handlePage(3)}
-          >
-            {page}
-          </span>
-        )}
-        {totalPages > 3 && (
+        {(campaign?.totalPages || totalPages) > 3 &&
+          page > 2 &&
+          page !== (campaign?.totalPages || totalPages) && (
+            <span
+              className={`cursor-pointer rounded-full h-8 w-8 flex items-center justify-center text-[12px] ${
+                (campaign?.totalPages || totalPages) > 3
+                  ? "bg-[#004741] text-white"
+                  : "bg-white text-[#004741]"
+              }`}
+              onClick={() => handlePage(3)}
+            >
+              {page}
+            </span>
+          )}
+        {(campaign?.totalPages || totalPages) > 3 && (
           <span
             className="cursor-pointer bg-white rounded-full h-8 w-8 flex items-center justify-center text-[#004741]"
             onClick={() => handlePage(3)}
@@ -131,21 +130,23 @@ const CampaignTable = ({
             <RiMoreLine />
           </span>
         )}
-        {totalPages > 3 && (
+        {(campaign?.totalPages || totalPages) > 3 && (
           <span
             className={`cursor-pointer rounded-full h-8 w-8 flex items-center justify-center text-[12px] ${
-              page === totalPages
+              page === (campaign?.totalPages || totalPages)
                 ? "bg-[#004741] text-white"
                 : "bg-white text-[#004741]"
             }`}
-            onClick={() => handlePage(totalPages)}
+            onClick={() => handlePage(campaign?.totalPages || totalPages)}
           >
-            {totalPages}
+            {campaign?.totalPages || totalPages}
           </span>
         )}
         <HiMiniArrowRight
           className={`cursor-pointer text-xl ${
-            page === totalPages ? "text-gray-500" : "text-[#004741]"
+            page === (campaign?.totalPages || totalPages)
+              ? "text-gray-500"
+              : "text-[#004741]"
           }`}
           onClick={() => handlePage(page + 1)}
         />
