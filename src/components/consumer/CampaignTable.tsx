@@ -29,7 +29,7 @@ const CampaignTable = ({
       setIsLoading(true);
       try {
         const { data } = await customAxios.get(
-          `/campaign/?search=${search}&page=${page}&limit=2`
+          `/campaign/?search=${search}&page=${page}&limit=10`
         );
         setCampaign(data);
       } catch (error) {}

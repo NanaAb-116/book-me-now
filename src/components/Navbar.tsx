@@ -72,18 +72,6 @@ const Navbar = () => {
       </div>
       {showMobileNav && (
         <div className="bg-white fixed z-30 top-0 bottom-0 right-0 left-0 pt-20 pb-5 flex flex-col justify-between px-2 lg:hidden">
-          {/* <img
-            src={logo}
-            alt="logo"
-            className="cursor-pointer fixed top-8 left-2"
-          />
-          <span
-            className="cursor-pointer lg:hidden fixed top-8 right-2"
-            onClick={() => setShowMobileNav(!showMobileNav)}
-          >
-            <FaBars className="z-40 text-3xl" />
-          </span> */}
-
           <div className="">
             <ul className="flex flex-col gap-2">
               {navItems.map((item) => {
