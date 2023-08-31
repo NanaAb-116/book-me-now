@@ -68,6 +68,7 @@ const Customers = () => {
               campaign={campaign}
               setCampaign={setCampaign}
               setTotalPages={setTotalPages}
+              totalPages={totalPages}
             />
           )}
         </div>

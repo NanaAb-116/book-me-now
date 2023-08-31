@@ -18,6 +18,7 @@ type Props = {
   campaign: Campaign[] | null;
   setCampaign: React.Dispatch<React.SetStateAction<Campaign[] | null>>;
   setTotalPages: React.Dispatch<React.SetStateAction<number>>;
+  totalPages: number;
 };
 
 const CreateCampaignForm = ({
@@ -26,6 +27,7 @@ const CreateCampaignForm = ({
   setCampaign,
   campaign,
   setTotalPages,
+  totalPages,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,7 +55,7 @@ const CreateCampaignForm = ({
         },
         ...(prevState as Campaign[]),
       ]);
-      setTotalPages(campaign ? Math.ceil(campaign?.length / 10) : 1);
+      setTotalPages(campaign ? Math.ceil(totalPages / 10) : 1);
       setShowModal(false);
     } catch (error: any) {
       if (error.response.status === 400) {

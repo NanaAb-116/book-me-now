@@ -62,7 +62,7 @@ const CampaignTable = ({
             </tr>
           </thead>
           <tbody className="">
-            {campaign?.slice(0, 11).map((item) => {
+            {campaign?.slice(0, 10).map((item) => {
               return (
                 <tr
                   key={item._id}
