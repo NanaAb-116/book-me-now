@@ -54,7 +54,7 @@ const CreateCampaignForm = ({
         ...(prevState as Campaign[]),
       ]);
       setTotalPages(campaign ? Math.ceil(campaign?.length / 10) : 1);
-      console.log(campaign);
+      setShowModal(false);
     } catch (error: any) {
       if (error.response.status === 400) {
         toast.error("Campaign Already Exists");
